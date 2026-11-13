@@ -81,6 +81,9 @@ class GenreChips extends ConsumerWidget {
     final activeGenreFilter = sortConfig?.filters.firstWhereOrNull(
       (filter) => filter.type == ItemFilterType.genreFilter,
     );
+    // Playlist genre metadata is aggregated from its tracks, so the same
+    // genre can legitimately be returned more than once.
+    final uniqueGenres = {for (final genre in genres) genre.id: genre}.values;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -97,7 +100,7 @@ class GenreChips extends ConsumerWidget {
                 onRemove: () => sortConfigController!.updateGenreFilter(null),
                 showPlainName: true,
               ),
-            ...genres.where((g) => g.id != activeGenreFilter?.extraBaseItem.id).map((genre) {
+            ...uniqueGenres.where((g) => g.id != activeGenreFilter?.extraBaseItem.id).map((genre) {
               return GenreChip(
                 key: ValueKey(genre.id),
                 backgroundColor: backgroundColor,
